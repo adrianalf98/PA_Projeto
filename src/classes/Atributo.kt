@@ -11,6 +11,11 @@ import visitante.Visitor
  */
 data class Atributo(private var nome: String, private var valor: String): Componente(nome) {
 
+    /**
+     * visitor visita o atributo
+     *
+     * @param v the visitor
+     */
     override fun accept(v: Visitor) {
         v.visit(this)
     }
@@ -29,12 +34,14 @@ data class Atributo(private var nome: String, private var valor: String): Compon
      *
      * @return nome
      */
-    override fun getNome():String{return this.nome}
+    override fun getNome():String{
+        return this.nome
+    }
 
     /**
      * Altera o nome do atributo
      *
-     * @param nome
+     * @param nome com o novo nome
      */
     fun setNome(nome: String) {
         if (!nome.contains(" ")){
@@ -45,14 +52,16 @@ data class Atributo(private var nome: String, private var valor: String): Compon
     /**
      * Devolve o valor do atributo
      *
-     * @return
+     * @return o valor
      */
-    fun getValor():String{return this.valor}
+    fun getValor():String{
+        return this.valor
+    }
 
     /**
      * Altera o valor do atributo
      *
-     * @param valor
+     * @param valor o novo valor
      */
     fun setValor(valor: String) {
         this.valor = valor

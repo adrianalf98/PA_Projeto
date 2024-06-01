@@ -5,31 +5,66 @@ import classes.Entidade
 import kotlin.reflect.KClass
 import kotlin.reflect.full.*
 
+
+/**
+ * Implementação da biblioteca XML.
+ */
 class XMLLibraryImpl : XMLLibrary {
 
+
+    /**
+     * Anotação para definir uma entidade XML.
+     *
+     * @param name Nome da entidade.
+     */
     @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
     annotation class XmlEntity(
         val name: String
     )
 
+    /**
+     * Anotação para definir um atributo XML.
+     *
+     * @param name Nome do atributo.
+     */
     @Target(AnnotationTarget.PROPERTY)
     annotation class XmlAtribute(
         val name: String
     )
 
+    /**
+     * Anotação para definir um adaptador XML.
+     *
+     * @param name Classe do adaptador.
+     */
     @Target(AnnotationTarget.CLASS)
     annotation class XmlAdapter(
         val name: KClass<*>
     )
 
+    /**
+     * Anotação para definir uma string XML.
+     *
+     * @param name Classe alteradora da string.
+     */
     @Target(AnnotationTarget.PROPERTY)
     annotation class XmlString(
         val name: KClass<*>
     )
 
+
+    /**
+     * Anotação para esconder um elemento XML.
+     */
     @Target(AnnotationTarget.PROPERTY)
     annotation class XmlHide()
 
+    /**
+     * Cria uma entidade a partir de um objeto.
+     *
+     * @param obj Objeto do qual se deseja criar a entidade.
+     * @return Entidade criada.
+     */
     override fun criarEntidade(obj: Any): Entidade {
         val clazz = obj::class
         require(clazz.isData) { "A classe fornecida deve ser uma data class." }
@@ -75,7 +110,7 @@ class XMLLibraryImpl : XMLLibrary {
 
             }
             else if (property.hasAnnotation<XmlAtribute>()){
-                //Vai buscar o valor à variável correspondente à actual propriedade
+                //Vai buscar o valor à variável correspondente à atual propriedade
                 val valor = property.getter.call(obj)
                 entidade.adicionarAtributo(propertyName, valor.toString())
             }
@@ -97,7 +132,7 @@ class XMLLibraryImpl : XMLLibrary {
      * Devolve uma string da entidade segundo a estrutura de um ficheiro XML
      *
      * @param entidade Entidade que se pretende imprimir como Documento XML
-     * @return
+     * @return String formatada como XML.
      */
     override fun prettyPrint(entidade: Entidade): String {
         val output = StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<${entidade.getNome()}")
@@ -171,10 +206,23 @@ class XMLLibraryImpl : XMLLibrary {
         }
     }
 
+    /**
+     * Gera um documento XML a partir de um objeto.
+     *
+     * @param obj Objeto a ser convertido em XML.
+     * @return String formatada como XML.
+     */
     override fun gerarXML(obj: Any): String {
         return prettyPrint(criarEntidade(obj))
     }
 
+    /**
+     * Auxiliar para procurar entidades usando caminho XPath.
+     *
+     * @param entidade Entidade inicial para a busca.
+     * @param xPath Caminho XPath para a busca.
+     * @param resultado Lista de entidades encontradas.
+     */
     private fun microXPath(entidade: Entidade, xPath: String, resultado: MutableList<Entidade>) {
         //Separa o xPath numa lista de caminhos (entidades pelas quais se pretende passar)
         var caminhos = xPath.split('/')
@@ -202,9 +250,11 @@ class XMLLibraryImpl : XMLLibrary {
     }
 
     /**
-     * Pretty print da entidade e seus filhos
+     * Pretty print da entidade e seus filhos.
      *
-     * @return string com os dados da entidade e filhos
+     * @param entidade Entidade a ser impressa.
+     * @param profundidade Nível de profundidade na hierarquia XML.
+     * @return String com os dados da entidade e filhos.
      */
     fun printEntidade(entidade: Entidade, profundidade: Int): String {
         val output = StringBuilder("")
@@ -215,6 +265,7 @@ class XMLLibraryImpl : XMLLibrary {
         for (atributo in entidade.getAtributos()) {
             output.append(" ").append(atributo.printAtributo())
         }
+
         if (entidade.getEntidades().isEmpty() && (entidade.getTextoAninhado() == null || entidade.getTextoAninhado()!!.isEmpty())) {
             output.append("/>")
         }
@@ -241,6 +292,12 @@ class XMLLibraryImpl : XMLLibrary {
         return output.toString()
     }
 
+    /**
+     * Gera um string com indentação de tabulação.
+     *
+     * @param nivel Nível de profundidade para indentação.
+     * @return String com espaços de indentação.
+     */
     private fun getTabbed(depth: Int): String {
         val output = StringBuilder("")
         var i = 0
@@ -251,6 +308,12 @@ class XMLLibraryImpl : XMLLibrary {
         return output.toString()
     }
 
+    /**
+     * Adiciona entidade como subentidade de outra entidade.
+     *
+     * @param elemento Elemento a ser adicionado como subentidade.
+     * @param entidade Entidade mãe.
+     */
     fun adicionarEntidade(elemento: Any, entidade: Entidade) {
         val clazz = elemento::class
         require(clazz.isData) { "A classe fornecida deve ser uma data class." }
@@ -308,6 +371,8 @@ class XMLLibraryImpl : XMLLibrary {
 
     /**
      * Adiciona um novo atributo à entidade designada
+     * Este método percorre recursivamente a hierarquia XML e adiciona o atributo especificado
+     * à entidade com o nome correspondente.
      *
      * @param entidade Entidade à qual queremos adicionar o atributo a entidade(s)
      * @param nomeEntidade Nome da entidade à qual queremos adicionar o atributo
@@ -327,10 +392,11 @@ class XMLLibraryImpl : XMLLibrary {
     }
 
     /**
-     * Renomear todas as entidades com o nome dado para o novo valor
+     * Renomeia todas as entidades com o nome dado para o novo valor
      *
-     * @param nomeAntigo Nome que se pretende alterar
-     * @param nomeNovo Nome que se pretende definir
+     * @param entidade Entidade onde se inicia a renomeação.
+     * @param nomeAntigo Nome que se pretende alterar.
+     * @param nomeNovo Nome que se pretende definir.
      */
     fun renomearEntidadesGlobalmente(entidade: Entidade, nomeAntigo: String, nomeNovo: String){
         if (nomeAntigo.isNotEmpty() && nomeNovo.isNotEmpty() && !nomeNovo.contains(" ")) {
@@ -344,7 +410,7 @@ class XMLLibraryImpl : XMLLibrary {
     }
 
     /**
-     * Remover todas as entidades com o nome dado
+     * Remove todas as entidades com o nome dado
      *
      * @param entidade Entidade que se pretende encontrar a entidade a Remover
      * @param nome Nome das entidades que se pretende remover
@@ -368,11 +434,11 @@ class XMLLibraryImpl : XMLLibrary {
     }
 
     /**
-     * Renomear todos os atributos com o nome dado para o novo valor
+     * Renomeia todos os atributos com o nome dado para o novo valor
      *
-     * @param entidade entidade
-     * @param nomeAntigo Nome que se pretende alterar
-     * @param nomeNovo Nome que se pretende definir
+     * @param entidade Entidade onde se inicia a renomeação.
+     * @param nomeAntigo Nome que se pretende alterar.
+     * @param nomeNovo Nome que se pretende definir.
      */
     fun renomearAtributosGlobalmente(entidade: Entidade, nomeAntigo: String, nomeNovo: String){
         if (nomeNovo.isNotEmpty() && nomeAntigo.isNotEmpty()){
@@ -388,10 +454,11 @@ class XMLLibraryImpl : XMLLibrary {
     }
 
     /**
-     * Remover todas os atributos com o nome dado a entidades com o nome dado
+     * Remove todos os atributos com o nome dado a entidades com o nome dado
      *
-     * @param nomeEntidade nome da entidade à qual se pretende remover o atributo
-     * @param nomeAtributo nome do atributo
+     * @param entidade Entidade onde se inicia a remoção dos atributos.
+     * @param nomeEntidade Nome da entidade à qual se pretende remover o atributo.
+     * @param nomeAtributo Nome do atributo que se pretende remover.
      */
     fun removerAtributosGlobalmente(entidade: Entidade, nomeEntidade: String, nomeAtributo: String){
         if (nomeEntidade.isNotEmpty() && nomeAtributo.isNotEmpty()){
@@ -406,10 +473,12 @@ class XMLLibraryImpl : XMLLibrary {
     }
 
     /**
-     * Alterar todas os atributos com o nome dado a entidades com o nome dado
+     * Altera todas os atributos com o nome dado a entidades com o nome dado
      *
-     * @param nomeEntidade nome da entidade à qual se pretende remover o atributo
-     * @param nomeAtributo nome do atributo
+     * @param entidade Entidade onde se inicia a alteração dos atributos.
+     * @param nomeEntidade Nome da entidade à qual se pretende alterar o atributo.
+     * @param nomeAtributo Nome do atributo que se pretende alterar.
+     * @param valorNovo Novo valor para o atributo.
      */
     fun alterarAtributosGlobalmente(entidade: Entidade, nomeEntidade: String, nomeAtributo: String, valorNovo: String){
         if (nomeEntidade.isNotEmpty() && nomeAtributo.isNotEmpty() && valorNovo.isNotEmpty()){
@@ -425,8 +494,9 @@ class XMLLibraryImpl : XMLLibrary {
     /**
      * Adiciona uma subEntidade à entidade dada
      *
-     * @param entidade Entidade onde se pretende procurar onde adicionar a nova subEntidade
-     * @param nome Nome da nova entidade
+     * @param entidade Entidade à qual se pretende adicionar a nova subentidade.
+     * @param nomeSubEntidade Nome da nova subentidade a ser adicionada.
+     * @param nomeEntidadePai Nome da entidade à qual se pretende adicionar a subentidade.
      */
     fun adicionarSubEntidade(entidade: Entidade, nomeSubEntidade: String, nomeEntidadePai: String){
         if (nomeSubEntidade.isNotEmpty() && nomeEntidadePai.isNotEmpty() && !nomeSubEntidade.contains(" ")){

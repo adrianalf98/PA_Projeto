@@ -6,7 +6,8 @@ import visitante.Visitor
  * Objecto entidade
  *
  * @param nome nome da entidade
- * @constructor cria uma entidade com o nome dado
+ * @param entidadeMae entidade mãe da entidade atual, se existir
+ * @constructor cria uma entidade com o nome dado e entidade mãe opcional
  */
 data class Entidade(private var nome: String, private var entidadeMae: Entidade?) : Componente(nome){
 
@@ -16,6 +17,11 @@ data class Entidade(private var nome: String, private var entidadeMae: Entidade?
 
     private var textoAninhado: String? = null
 
+    /**
+     * Aceita um visitante para visitar esta entidade.
+     *
+     * @param v o visitante
+     */
     override fun accept(v: Visitor) {
         if(v.visit(this)){
             entidades.forEach{
@@ -41,7 +47,7 @@ data class Entidade(private var nome: String, private var entidadeMae: Entidade?
     }
 
     /**
-     * Adicionar uma entidade à lista de entidades da entidade actual
+     * Adiciona uma entidade à lista de entidades da entidade actual
      *
      * @param nome o novo nome da nova entidade
      */
@@ -52,21 +58,21 @@ data class Entidade(private var nome: String, private var entidadeMae: Entidade?
     /**
      * Adiciona um novo atributo à entidade
      *
-     * @param nome
-     * @param valor
+     * @param nome o nome do atributo
+     * @param valor o valor do atributo
      */
     fun adicionarAtributo(nome: String, valor: String) {
-        //Para não haverem nomes de atributos com espaços (parte a formatação do XML
-        //E para não haverem atributos repetidos
+        //Para não haverem nomes de atributos com espaços (parte a formatação do XML)
+        //E para não haver atributos repetidos
         if(!nome.contains(" ") && !atributos.any { it.getNome() == nome }) {
             atributos.add(Atributo(nome, valor))
         }
     }
 
     /**
-     * Remover o atributo com o nome dado
+     * Remove o atributo com o nome dado
      *
-     * @param nome
+     * @param nome o nome do atributo a ser removido
      */
     fun removerAtributo(nome: String) {
         for (atributo in atributos) {
@@ -80,8 +86,8 @@ data class Entidade(private var nome: String, private var entidadeMae: Entidade?
     /**
      * Altera o nome do atributo
      *
-     * @param nomeAntigo nome actual do atributo
-     * @param nomeNovo nome novo do atributo
+     * @param nomeAntigo nome atual do atributo
+     * @param nomeNovo novo nome do atributo
      */
     fun renomearAtributo(nomeAntigo: String, nomeNovo: String) {
         if(!nome.contains(" ")) {
@@ -110,7 +116,7 @@ data class Entidade(private var nome: String, private var entidadeMae: Entidade?
     /**
      * Alterar valor de atributos de subEntidades com o nome dado
      *
-     * @param nome o nome do atributo a alterar
+     * @param nome o nome do atributo a ser alterado
      * @param valorNovo o valor substituto do atributo
      */
     fun alterarAtributosSubEntidades(nome: String, valorNovo: String) {
@@ -128,7 +134,9 @@ data class Entidade(private var nome: String, private var entidadeMae: Entidade?
      *
      * @return nome da entidade
      */
-    override fun getNome():String{return this.nome}
+    override fun getNome():String{
+        return this.nome
+    }
 
     /**
      * Devolve a lista de atributos da entidade
@@ -158,7 +166,7 @@ data class Entidade(private var nome: String, private var entidadeMae: Entidade?
     }
 
     /**
-     * Devolve a lista de entidades da entidade
+     * Devolve(Altera) a lista de entidades da entidade
      *
      * @return lista de entidades
      */
@@ -171,31 +179,43 @@ data class Entidade(private var nome: String, private var entidadeMae: Entidade?
      *
      * @return texto aninhado da entidade
      */
-    fun getTextoAninhado(): String? {return this.textoAninhado}
+    fun getTextoAninhado(): String? {
+        return this.textoAninhado
+    }
 
     /**
      * Insere texto aninhado na entidade
      *
-     * @param textoAninhado
+     * @param textoAninhado texto aninhado a ser inserido
      */
     fun setTextoAninhado(textoAninhado: String) {
         this.textoAninhado = textoAninhado
     }
 
     /**
-     * Devolve o componente pai, seja ele a raíz (documento) ou um filho (entidade)
+     * Devolve a entidade mãe, seja ela a raiz (documento) ou um filho (entidade)
      *
-     * @return entidade
+     * @return entidade mãe
      */
     fun getEntidadeMae(): Entidade? {
         return entidadeMae
     }
 
+    /**
+     * Adiciona uma subentidade à lista de subentidades da entidade atual
+     *
+     * @param subEntidade a subentidade a ser adicionada
+     */
     fun addSubEntidade(subEntidade: Entidade) {
         subEntidade.entidadeMae = this
         entidades.add(subEntidade)
     }
 
+    /**
+     * Remove uma subentidade da lista de subentidades da entidade atual.
+     *
+     * @param subEntidade a subentidade a ser removida
+     */
     fun removeSubEntidade(subEntidade: Entidade) {
         entidades.remove(subEntidade)
     }

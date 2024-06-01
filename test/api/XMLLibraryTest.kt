@@ -12,13 +12,21 @@ internal class XMLLibraryTest {
 
     private val lib = XMLLibraryImpl()
 
+    /*
+    * Testa se a biblioteca consegue criar uma entidade
+    * a partir de um determinado objeto (como FUC ou Plano) corretamente
+     */
     @Test
     fun testeCriarEntidade() {
+        // Cria um objeto ComponenteAvaliacao
         val componenteAvaliacao1 = ComponenteAvaliacao("Quizzes", 20)
         val componenteAvaliacao2 = ComponenteAvaliacao("Projeto", 80)
+        // Cria um objeto FUC
         val fuc = FUC("M4310", "Programação Avançada", 6.0,
             "la la...", listOf(componenteAvaliacao1, componenteAvaliacao2))
+        // Cria uma entidade a partir do objeto FUC usando XMLLibraryImpl
         val entidade = lib.criarEntidade(fuc)
+        // Asserts para testar se a entidade foi criada corretamente
         assertEquals(entidade.getNome(), "FUC")
         assertFalse(entidade.getEntidades().isEmpty())
         assert(entidade.getEntidades().size.equals(4))
@@ -27,6 +35,9 @@ internal class XMLLibraryTest {
         //println(lib.prettyPrint(entidade))
     }
 
+    /*
+    * Tem uma estrutura diferente a do anterior
+     */
     @Test
     fun testeCriarEntidade2() {
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)
@@ -34,14 +45,18 @@ internal class XMLLibraryTest {
         val fuc1 = FUC("M4310", "Programação Avançada", 6.0,
             "la la...", listOf(componenteAvaliacao1fuc1, componenteAvaliacao2fuc1))
 
+        // Cria outro conjunto de objetos ComponenteAvaliacao e um objeto FUC
         val componenteAvaliacao1fuc2 = ComponenteAvaliacao("Dissertação", 60)
         val componenteAvaliacao2fuc2 = ComponenteAvaliacao("Apresentação", 20)
         val componenteAvaliacao3fuc2 = ComponenteAvaliacao("Discussão", 20)
         val fuc2 = FUC("03782", "Dissertação", 42.0,
             "la la...", listOf(componenteAvaliacao1fuc2, componenteAvaliacao2fuc2, componenteAvaliacao3fuc2))
 
+        //Cria um objeto Plano
         val plano = Plano(listOf(fuc1, fuc2))
+        //Cria uma entidade a partir do objeto Plano usando XMLLibraryImpl
         val entidade = lib.criarEntidade(plano)
+
         assertEquals(entidade.getNome(), "plano")
         assertFalse(entidade.getEntidades().isEmpty())
         assert(entidade.getEntidades().size.equals(2))
@@ -49,17 +64,26 @@ internal class XMLLibraryTest {
         //println(lib.prettyPrint(entidade))
     }
 
+    /*
+    * Testa se a biblioteca lança uma exceção ao tentar criar uma entidade
+    * a partir de um objeto que não é uma classe de dados
+     */
     @Test
     fun testCriarEntidadeWithInvalidDataClass() {
+        // Define uma classe não de dados para teste
         class NonDataClass(val attribute: String)
-
+        //Cria uma instância da classe não de dados
         val obj = NonDataClass(attribute = "value")
-
+        //Asserts para testar se uma IllegalArgumentException é lançada ao criar uma entidade
         assertThrows<IllegalArgumentException> {
             lib.criarEntidade(obj)
         }
     }
 
+    /*
+    * Testa se a biblioteca consegue fazer o prettyprint
+    * corretamente de uma entidade num formato XML.
+    */
     @Test
     fun testePrettyPrint(){
         val componenteAvaliacao1 = ComponenteAvaliacao("Quizzes", 20)
@@ -77,6 +101,9 @@ internal class XMLLibraryTest {
                 "</FUC>")
     }
 
+    /*
+    *Igual ao anterior, mas se há um caso de falha
+     */
     @Test
     fun testePrettyPrintFail(){
         val componenteAvaliacao1 = ComponenteAvaliacao("Quizzes", 20)
@@ -89,11 +116,14 @@ internal class XMLLibraryTest {
                 "<FUC codigo=\"\">\n" +
                 "\t<ects>6.0</ects>\n" +
                 "\t<nome/>\n" +
-                "\t<componente nome=\"Quizzes\" peso=\"10\"/>\n" +
-                "\t<componente nome=\"Projeto\" peso=\"90\"/>\n" +
+                "\t<componente nome=\"Quizzes\" peso=\"10%\"/>\n" +
+                "\t<componente nome=\"Projeto\" peso=\"90%\"/>\n" +
                 "</FUC>")
     }
 
+    /*
+    *Testa a função micro XPath
+     */
     @Test
     fun testeMicroXPathProfundidadeSimples(){
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)
@@ -114,6 +144,9 @@ internal class XMLLibraryTest {
         assertEquals(value.toString(), esperado)
     }
 
+    /*
+    *Testa um caso em que a string de consulta está vazia
+    */
     @Test
     fun testeMicroXPathProfundidadeSimplesVazio(){
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)
@@ -134,6 +167,9 @@ internal class XMLLibraryTest {
         assertEquals(value.toString(), esperado)
     }
 
+    /*
+    *Testa a função micro XPath com uma profundidade de 1.
+     */
     @Test
     fun testeMicroXPathProfundidade1(){
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)
@@ -178,6 +214,9 @@ internal class XMLLibraryTest {
         assertEquals(value.toString(), esperado)
     }
 
+    /*
+    *Testa a função micro XPath com uma profundidade de 3.
+     */
     @Test
     fun testeMicroXPathProfundidade3(){
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)
@@ -212,6 +251,10 @@ internal class XMLLibraryTest {
         assertEquals(value.toString(), esperado)
     }
 
+    /*
+    * Testa se a biblioteca consegue gerar XML
+    * de um determinado objeto (como Plano) corretamente
+     */
     @Test
     fun testeGerarXML(){
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)
@@ -248,6 +291,10 @@ internal class XMLLibraryTest {
         assertEquals(resultado, esperado)
     }
 
+    /*
+    *Testa se a biblioteca consegue adicionar atributos globalmente
+    * a todas as entidades de um determinado tipo.
+     */
     @Test
     fun testeAdiconarAtributoGlobalmente(){
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)
@@ -300,6 +347,9 @@ internal class XMLLibraryTest {
         assertEquals(resultado3, esperado3)
     }
 
+    /*
+    * Testa se a biblioteca pode renomear entidades globalmente.
+     */
     @Test
     fun testeRenomearEntidadesGlobalmente(){
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)
@@ -343,6 +393,9 @@ internal class XMLLibraryTest {
         assertEquals(resultado2, esperado)
     }
 
+    /*
+    * Testa se a biblioteca pode remover entidades globalmente.
+     */
     @Test
     fun testeRemoverEntidadesGlobalmente(){
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)
@@ -382,6 +435,9 @@ internal class XMLLibraryTest {
         assertEquals(resultado2, esperado)
     }
 
+    /*
+    * Testa se a biblioteca pode renomear atributos globalmente.
+     */
     @Test
     fun testeRenomearAtributosGlobalmente(){
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)
@@ -424,6 +480,9 @@ internal class XMLLibraryTest {
         assertEquals(resultado2, esperado)
     }
 
+    /*
+    * Testa se a biblioteca consegue remover atributos globalmente.
+     */
     @Test
     fun testeRemoverAtributosGlobalmente(){
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)
@@ -466,6 +525,9 @@ internal class XMLLibraryTest {
         assertEquals(resultado2, esperado)
     }
 
+    /*
+    * Testa se a biblioteca consegue alterar valores de atributos globalmente.
+     */
     @Test
     fun testeAlterarAtributosGlobalmente(){
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)
@@ -508,6 +570,10 @@ internal class XMLLibraryTest {
         assertEquals(resultado2, esperado)
     }
 
+    /*
+    * Testa se a biblioteca consegue adicionar sub-entidades
+    * a uma entidade existente.
+     */
     @Test
     fun testeAdicionarSubEntidade(){
         val componenteAvaliacao1fuc1 = ComponenteAvaliacao("Quizzes", 20)

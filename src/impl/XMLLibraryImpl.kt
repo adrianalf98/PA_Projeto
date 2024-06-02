@@ -96,7 +96,7 @@ class XMLLibraryImpl : XMLLibrary {
                         }
                     } else {
                         // Caso contrário, cria uma subentidade para a lista e adiciona os elementos
-                        val subEntidade = Entidade(propertyName, entidade)
+                        val subEntidade = Entidade(propertyName ?: "Entidade", entidade)
                         entidade.addSubEntidade(subEntidade)
                         for(elemento in elementos){
                             if (elemento != null) {
@@ -107,8 +107,8 @@ class XMLLibraryImpl : XMLLibrary {
                 }
                 //Se o tipo for String/Double/etc, cria uma subentidade
                 else {
-                    val subEntidade = Entidade(propertyName, entidade)
                     //Vai buscar o valor à variável correspondente à actual propriedade
+                    val subEntidade = Entidade(propertyName ?: "Entidade", entidade)
                     val valor = property.getter.call(obj)
                     subEntidade.setTextoAninhado(valor.toString())
                     entidade.addSubEntidade(subEntidade)
@@ -117,10 +117,23 @@ class XMLLibraryImpl : XMLLibrary {
             }
             // Verifica se a propriedade tem a anotação @XmlAtribute.
             else if (property.hasAnnotation<XmlAtribute>()){
-                // Adiciona a propriedade como um atributo da entidade.
-                //Vai buscar o valor à variável correspondente à atual propriedade
-                val valor = property.getter.call(obj)
-                entidade.adicionarAtributo(propertyName, valor.toString())
+                if (property.hasAnnotation<XmlString>()){
+                    var valor = property.getter.call(obj)
+                    val adapter = property.findAnnotation<XmlString>()!!.name
+                    val instance = adapter.primaryConstructor!!.call()
+
+                    for (function in adapter.functions){
+                        if(!function.name.equals("toString") && !function.name.equals("equals") && !function.name.equals("hashCode")){
+                            valor = function.call(instance, valor.toString())
+                        }
+                    }
+                    entidade.adicionarAtributo(propertyName ?: "Atributo", valor.toString())
+                } else {
+                    // Adiciona a propriedade como um atributo da entidade.
+                    //Vai buscar o valor à variável correspondente à atual propriedade
+                    val valor = property.getter.call(obj) as String
+                    entidade.adicionarAtributo(propertyName ?: "Atributo", valor)
+                }
             }
         }
         // Verifica se a classe tem a anotação @XmlAdapter
@@ -375,8 +388,8 @@ class XMLLibraryImpl : XMLLibrary {
                 }
                 // Se o tipo não for uma lista, cria uma sub-subentidade
                 else {
-					val subSubEntidade = Entidade(propertyName, entidade)
                     // Obtém o valor da propriedade e define-o como texto aninhado na sub-subentidade
+					val subSubEntidade = Entidade(propertyName ?: "Entidade", entidade)
                     val valor = property.getter.call(elemento)
                     subSubEntidade.setTextoAninhado(valor.toString())
                     subEntidade.addSubEntidade(subSubEntidade)
@@ -384,9 +397,22 @@ class XMLLibraryImpl : XMLLibrary {
 
             }
             else if (property.hasAnnotation<XmlAtribute>()){
-                // Se a propriedade tiver a anotação @XmlAtribute, adiciona-a como atributo à subentidade
-                val valor = property.getter.call(elemento)
-                subEntidade.adicionarAtributo(propertyName, valor.toString())
+                if (property.hasAnnotation<XmlString>()){
+                    var valor = property.getter.call(elemento)
+                    val adapter = property.findAnnotation<XmlString>()!!.name
+                    val instance = adapter.primaryConstructor!!.call()
+
+                    for (function in adapter.functions){
+                        if(!function.name.equals("toString") && !function.name.equals("equals") && !function.name.equals("hashCode")){
+                            valor = function.call(instance, valor.toString())
+                        }
+                    }
+                    subEntidade.adicionarAtributo(propertyName ?: "Atributo", valor.toString())
+                } else {
+                    // Se a propriedade tiver a anotação @XmlAtribute, adiciona-a como atributo à subentidade
+                    val valor = property.getter.call(elemento)
+                    subEntidade.adicionarAtributo(propertyName ?: "Atributo", valor.toString())
+                }
             }
         }
         // Se a classe tiver a anotação @XmlAdapter, aplica o adaptador à subentidade

@@ -67,29 +67,35 @@ class XMLLibraryImpl : XMLLibrary {
      */
     override fun criarEntidade(obj: Any): Entidade {
         val clazz = obj::class
+        //Verfica se é uma data class
         require(clazz.isData) { "A classe fornecida deve ser uma data class." }
 
+        // Obtém o nome da entidade a partir da anotação @XmlEntity ou do nome da classe.
         val xmlEntity = clazz.findAnnotation<XmlEntity>()?.name ?: clazz.simpleName
         val properties = clazz.declaredMemberProperties
 
-
+        // Cria uma nova entidade com o nome obtido.
         var entidade = Entidade(xmlEntity ?: "Entidade", null)
         for (property in properties) {
             val propertyName = property.name
 
+            // Verifica se a propriedade tem a anotação @XmlEntity.
             if (property.hasAnnotation<XmlEntity>()){
                 val type = property.returnType.classifier
 
                 //Se o tipo da propriedade for uma lista
                 if  (type == List::class){
                     val elementos = property.getter.call(obj) as List<*>
+                    // Verifica se a propriedade tem a anotação @XmlHide.
                     if (property.hasAnnotation<XmlHide>()){
+                        // Adiciona cada elemento da lista como subentidade da entidade principal.
                         for(elemento in elementos){
                             if (elemento != null) {
                                 adicionarEntidade(elemento, entidade)
                             }
                         }
                     } else {
+                        // Caso contrário, cria uma subentidade para a lista e adiciona os elementos
                         val subEntidade = Entidade(propertyName, entidade)
                         entidade.addSubEntidade(subEntidade)
                         for(elemento in elementos){
@@ -99,7 +105,7 @@ class XMLLibraryImpl : XMLLibrary {
                         }
                     }
                 }
-                //Se o tipo for String/Double/etc
+                //Se o tipo for String/Double/etc, cria uma subentidade
                 else {
                     val subEntidade = Entidade(propertyName, entidade)
                     //Vai buscar o valor à variável correspondente à actual propriedade
@@ -109,15 +115,20 @@ class XMLLibraryImpl : XMLLibrary {
                 }
 
             }
+            // Verifica se a propriedade tem a anotação @XmlAtribute.
             else if (property.hasAnnotation<XmlAtribute>()){
+                // Adiciona a propriedade como um atributo da entidade.
                 //Vai buscar o valor à variável correspondente à atual propriedade
                 val valor = property.getter.call(obj)
                 entidade.adicionarAtributo(propertyName, valor.toString())
             }
         }
+        // Verifica se a classe tem a anotação @XmlAdapter
         if (clazz.hasAnnotation<XmlAdapter>()){
+            // Obtém a classe do adaptador e cria uma instância dele
             val adapter = clazz.findAnnotation<XmlAdapter>()!!.name
             val instance = adapter.primaryConstructor!!.call()
+            // Chama todos os métodos do adapter na entidade, exceto os métodos padrão
             for (function in adapter.functions){
                 if(!function.name.equals("toString") && !function.name.equals("equals") && !function.name.equals("hashCode")){
                     entidade = function.call(instance, entidade) as Entidade
@@ -137,26 +148,28 @@ class XMLLibraryImpl : XMLLibrary {
     override fun prettyPrint(entidade: Entidade): String {
         val output = StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<${entidade.getNome()}")
 
+        // Adiciona os atributos da entidade ao XML.
         for (atributo in entidade.getAtributos()) {
             output.append(" ").append(atributo.printAtributo())
         }
 
-        //Quando não tem subentidade nem texto aninhado
+        // Quando a entidade não tem subentidades nem texto aninhado
         if (entidade.getEntidades().isEmpty() && (entidade.getTextoAninhado() == null || entidade.getTextoAninhado()!!.isEmpty())) {
             output.append("/>")
         }
-        //Quando tem subentidades e/ou texto aninhado
+        // Quando a entidade tem subentidades e/ou texto aninhado
         else {
-            //Quando não tem subentidades e tem texto aninhado
+            // Quando a entidade não tem subentidades, mas tem texto aninhado
             if (entidade.getEntidades().isEmpty()){
                 output.append(">")
                 output.append(entidade.getTextoAninhado())
                 output.append("</${entidade.getNome()}>")
             }
-            //Quando tem subentidades
+            // Quando a entidade tem subentidades
             else {
                 output.append(">\n")
 
+                // Adiciona cada subentidade ao XML, com indentação
                 for (subEntidade in entidade.getEntidades()) {
                     output.append(printEntidade(subEntidade, 1)).append("\n")
                 }
@@ -194,8 +207,7 @@ class XMLLibraryImpl : XMLLibrary {
                 //Novo xPath terá apenas os "caminhos" posteriores ao primeiro
                 val newXPath = caminhos.drop(1).joinToString(separator = "/")
 
-                //Por cada subentidade da entidade enviada erá procurar por entidades
-                // que corespondam ao novo xPath
+                // Por cada subentidade da entidade enviada, procura por entidades que correspondam ao novo xPath
                 for (subEntidade in entidade.getEntidades()){
                     if (subEntidade.getNome() == caminhos.get(1)){
                         microXPath(subEntidade, newXPath, resultado)
@@ -260,35 +272,48 @@ class XMLLibraryImpl : XMLLibrary {
         val output = StringBuilder("")
         output.append(getTabbed(profundidade))
 
+        // Adiciona o nome da entidade ao XML.
         output.append("<${entidade.getNome()}")
 
+        // Adiciona os atributos da entidade ao XML
         for (atributo in entidade.getAtributos()) {
             output.append(" ").append(atributo.printAtributo())
         }
 
+        // Quando a entidade não tem subentidades nem texto aninhado
         if (entidade.getEntidades().isEmpty() && (entidade.getTextoAninhado() == null || entidade.getTextoAninhado()!!.isEmpty())) {
             output.append("/>")
         }
+        // Quando a entidade tem subentidades e/ou texto aninhado
         else {
+            // Quando a entidade não tem subentidades, mas tem texto aninhado
             if (entidade.getEntidades().isEmpty()){
                 output.append(">")
                 output.append(entidade.getTextoAninhado())
                 output.append("</${entidade.getNome()}>")
-            } else {
+            }
+            // Quando a entidade tem subentidades
+            else {
                 output.append(">\n")
 
+                // Adiciona cada subentidade ao XML, com incremento na profundidade para a indentação correta
                 for (subEntidade in entidade.getEntidades()) {
                     output.append(printEntidade(subEntidade, profundidade+1)).append("\n")
                 }
 
+                // Adiciona a indentação de fecho
                 output.append(getTabbed(profundidade))
+
+                // Quando também tem texto aninhado, adiciona o texto aninhado com incremento na profundidade para a indentação correta
                 if(entidade.getTextoAninhado() != null && entidade.getTextoAninhado()!!.isNotEmpty()){
                     output.append(getTabbed(profundidade +1 ))
                     output.append(entidade.getTextoAninhado()).append("\n")
                 }
+                // Fecha a tag da entidade
                 output.append("</${entidade.getNome()}>")
             }
         }
+        // Retorna a string de saída contendo o XML
         return output.toString()
     }
 
@@ -301,6 +326,7 @@ class XMLLibraryImpl : XMLLibrary {
     private fun getTabbed(depth: Int): String {
         val output = StringBuilder("")
         var i = 0
+        // Adiciona uma tabulação à string de saída para cada nível de profundidade
         while (i < depth) {
             output.append("\t")
             i++
@@ -318,9 +344,11 @@ class XMLLibraryImpl : XMLLibrary {
         val clazz = elemento::class
         require(clazz.isData) { "A classe fornecida deve ser uma data class." }
 
+        // Obtém o nome da entidade XML a partir da anotação @XmlEntity ou o nome simples da classe.
         val xmlEntityName = clazz.findAnnotation<XmlEntity>()?.name ?: clazz.simpleName
         val properties = clazz.declaredMemberProperties
 
+        // Cria uma subentidade e adiciona-a à entidade fornecida
         var subEntidade = Entidade(xmlEntityName ?: "Entidade", entidade)
         entidade.addSubEntidade(subEntidade)
         for (property in properties) {
@@ -328,6 +356,7 @@ class XMLLibraryImpl : XMLLibrary {
 
             if (property.hasAnnotation<XmlEntity>()){
                 val type = property.returnType.classifier
+                // Se o tipo da propriedade for uma lista
                 if  (type == List::class){
                     val elementos = property.getter.call(elemento) as List<*>
                     if (property.hasAnnotation<XmlHide>()){
@@ -343,8 +372,11 @@ class XMLLibraryImpl : XMLLibrary {
                             }
                         }
                     }
-                } else {
+                }
+                // Se o tipo não for uma lista, cria uma sub-subentidade
+                else {
 					val subSubEntidade = Entidade(propertyName, entidade)
+                    // Obtém o valor da propriedade e define-o como texto aninhado na sub-subentidade
                     val valor = property.getter.call(elemento)
                     subSubEntidade.setTextoAninhado(valor.toString())
                     subEntidade.addSubEntidade(subSubEntidade)
@@ -352,11 +384,12 @@ class XMLLibraryImpl : XMLLibrary {
 
             }
             else if (property.hasAnnotation<XmlAtribute>()){
+                // Se a propriedade tiver a anotação @XmlAtribute, adiciona-a como atributo à subentidade
                 val valor = property.getter.call(elemento)
                 subEntidade.adicionarAtributo(propertyName, valor.toString())
             }
         }
-		
+        // Se a classe tiver a anotação @XmlAdapter, aplica o adaptador à subentidade
 		if (clazz.hasAnnotation<XmlAdapter>()){
             val adapter = clazz.findAnnotation<XmlAdapter>()!!.name
             val instance = adapter.primaryConstructor!!.call()
@@ -381,10 +414,12 @@ class XMLLibraryImpl : XMLLibrary {
      */
     fun adicionarAtributoGlobalmente(entidade: Entidade, nomeEntidade: String, nomeAtributo: String, valorAtributo: String) {
         if (nomeEntidade.isNotEmpty() && nomeAtributo.isNotEmpty() && valorAtributo.isNotEmpty()) {
+            // Se o nome da entidade atual corresponde ao nome da entidade fornecida, adiciona o atributo
             if (entidade.getNome().equals(nomeEntidade)){
                 entidade.adicionarAtributo(nomeAtributo, valorAtributo)
             }
 
+            // Itera sobre cada subentidade da entidade atual e aplica a função recursivamente
             for(subEntidade in entidade.getEntidades()){
                 adicionarAtributoGlobalmente(subEntidade, nomeEntidade, nomeAtributo, valorAtributo)
             }
@@ -400,9 +435,11 @@ class XMLLibraryImpl : XMLLibrary {
      */
     fun renomearEntidadesGlobalmente(entidade: Entidade, nomeAntigo: String, nomeNovo: String){
         if (nomeAntigo.isNotEmpty() && nomeNovo.isNotEmpty() && !nomeNovo.contains(" ")) {
+            // Se o nome da entidade atual corresponder ao nome antigo, renomeia a entidade com o novo nome
             if (entidade.getNome() == nomeAntigo) {
                 entidade.renomearEntidade(nomeNovo)
             }
+            // Itera sobre cada subentidade da entidade atual e aplica a função recursivamente
             for (subEntidade in entidade.getEntidades()) {
                 renomearEntidadesGlobalmente(subEntidade, nomeAntigo, nomeNovo)
             }
@@ -416,19 +453,24 @@ class XMLLibraryImpl : XMLLibrary {
      * @param nome Nome das entidades que se pretende remover
      */
     fun removerEntidadesGlobalmente(entidade: Entidade, nome: String){
+        //Verifica se está vazio
         if (nome.isNotEmpty()) {
+            // Lista para armazenar as entidades que serão removidas
             var entidadesParaRemover = mutableListOf<Entidade>()
 
+            // Obtém todas as entidades da entidade atual
             val entidades = entidade.getEntidades()
             for (subEntidade in entidades) {
+                // Se o nome da subentidade corresponder ao nome fornecido, adiciona à lista de entidades para remover
                 if (subEntidade.getNome() == nome) {
                     entidadesParaRemover.add(subEntidade)
                 } else {
+                    // Caso contrário, aplica a função recursivamente para verificar as subentidades aninhadas
                     removerEntidadesGlobalmente(subEntidade, nome)
                 }
             }
 
-            // Remover entidades fora da iteração
+            // Remove as entidades armazenadas na lista `entidadesParaRemover` da lista de entidades da entidade atual
             entidade.getEntidades().removeAll(entidadesParaRemover)
         }
     }
@@ -480,7 +522,7 @@ class XMLLibraryImpl : XMLLibrary {
      * @param nomeAtributo Nome do atributo que se pretende alterar.
      * @param valorNovo Novo valor para o atributo.
      */
-    fun alterarAtributosGlobalmente(entidade: Entidade, nomeEntidade: String, nomeAtributo: String, valorNovo: String){
+   /* fun alterarAtributosGlobalmente(entidade: Entidade, nomeEntidade: String, nomeAtributo: String, valorNovo: String){
         if (nomeEntidade.isNotEmpty() && nomeAtributo.isNotEmpty() && valorNovo.isNotEmpty()){
             if (entidade.getNome() == nomeEntidade){
                 entidade.alterarAtributo(nomeAtributo, valorNovo)
@@ -489,7 +531,7 @@ class XMLLibraryImpl : XMLLibrary {
                 alterarAtributosGlobalmente(subEntidade, nomeEntidade, nomeAtributo, valorNovo)
             }
         }
-    }
+    }*/
 
     /**
      * Adiciona uma subEntidade à entidade dada

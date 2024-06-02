@@ -96,8 +96,8 @@ internal class XMLLibraryTest {
                 "<FUC codigo=\"M4310\">\n" +
                 "\t<ects>6.0</ects>\n" +
                 "\t<nome>Programação Avançada</nome>\n" +
-                "\t<componente nome=\"Quizzes\" peso=\"20\"/>\n" +
-                "\t<componente nome=\"Projeto\" peso=\"80\"/>\n" +
+                "\t<componente nome=\"Quizzes\" peso=\"20%\"/>\n" +
+                "\t<componente nome=\"Projeto\" peso=\"80%\"/>\n" +
                 "</FUC>")
     }
 
@@ -116,8 +116,8 @@ internal class XMLLibraryTest {
                 "<FUC codigo=\"\">\n" +
                 "\t<ects>6.0</ects>\n" +
                 "\t<nome/>\n" +
-                "\t<componente nome=\"Quizzes\" peso=\"10%\"/>\n" +
-                "\t<componente nome=\"Projeto\" peso=\"90%\"/>\n" +
+                "\t<componente nome=\"Quizzes\" peso=\"10\"/>\n" +
+                "\t<componente nome=\"Projeto\" peso=\"90\"/>\n" +
                 "</FUC>")
     }
 
@@ -136,7 +136,7 @@ internal class XMLLibraryTest {
 
         val value = StringBuilder("")
 
-        val esperado = "<componente nome=\"Quizzes\" peso=\"20\"/>\n"
+        val esperado = "<componente nome=\"Quizzes\" peso=\"20%\"/>\n"
         for (resultado in resultados){
             value.append(lib.printEntidade(resultado, 0)).append("\n")
         }
@@ -159,7 +159,7 @@ internal class XMLLibraryTest {
 
         val value = StringBuilder("")
 
-        val esperado = "<componente nome=\"Quizzes\" peso=\"20\"/>\n"
+        val esperado = "<componente nome=\"Quizzes\" peso=\"20%\"/>\n"
         for (resultado in resultados){
             value.append(lib.printEntidade(resultado, 0)).append("\n")
         }
@@ -196,15 +196,15 @@ internal class XMLLibraryTest {
                         "\t<FUC codigo=\"M4310\">\n" +
                         "\t\t<ects>6.0</ects>\n" +
                         "\t\t<nome>Programação Avançada</nome>\n" +
-                        "\t\t<componente nome=\"Quizzes\" peso=\"20\"/>\n" +
-                        "\t\t<componente nome=\"Projeto\" peso=\"80\"/>\n" +
+                        "\t\t<componente nome=\"Quizzes\" peso=\"20%\"/>\n" +
+                        "\t\t<componente nome=\"Projeto\" peso=\"80%\"/>\n" +
                         "\t</FUC>\n" +
                         "\t<FUC codigo=\"03782\">\n" +
                         "\t\t<ects>42.0</ects>\n" +
                         "\t\t<nome>Dissertação</nome>\n" +
-                        "\t\t<componente nome=\"Dissertação\" peso=\"60\"/>\n" +
-                        "\t\t<componente nome=\"Apresentação\" peso=\"20\"/>\n" +
-                        "\t\t<componente nome=\"Discussão\" peso=\"20\"/>\n" +
+                        "\t\t<componente nome=\"Dissertação\" peso=\"60%\"/>\n" +
+                        "\t\t<componente nome=\"Apresentação\" peso=\"20%\"/>\n" +
+                        "\t\t<componente nome=\"Discussão\" peso=\"20%\"/>\n" +
                         "\t</FUC>\n" +
                         "</plano>\n"
         for (resultado in resultados){
@@ -239,11 +239,11 @@ internal class XMLLibraryTest {
 
         val value = StringBuilder("")
 
-        val esperado = "<componente nome=\"Quizzes\" peso=\"20\"/>\n" +
-                        "<componente nome=\"Projeto\" peso=\"80\"/>\n" +
-                        "<componente nome=\"Dissertação\" peso=\"60\"/>\n" +
-                        "<componente nome=\"Apresentação\" peso=\"20\"/>\n" +
-                        "<componente nome=\"Discussão\" peso=\"20\"/>\n"
+        val esperado = "<componente nome=\"Quizzes\" peso=\"20%\"/>\n" +
+                        "<componente nome=\"Projeto\" peso=\"80%\"/>\n" +
+                        "<componente nome=\"Dissertação\" peso=\"60%\"/>\n" +
+                        "<componente nome=\"Apresentação\" peso=\"20%\"/>\n" +
+                        "<componente nome=\"Discussão\" peso=\"20%\"/>\n"
         for (resultado in resultados){
             value.append(lib.printEntidade(resultado, 0)).append("\n")
         }
@@ -276,15 +276,15 @@ internal class XMLLibraryTest {
                         "\t<FUC codigo=\"M4310\">\n" +
                         "\t\t<ects>6.0</ects>\n" +
                         "\t\t<nome>Programação Avançada</nome>\n" +
-                        "\t\t<componente nome=\"Quizzes\" peso=\"20\"/>\n" +
-                        "\t\t<componente nome=\"Projeto\" peso=\"80\"/>\n" +
+                        "\t\t<componente nome=\"Quizzes\" peso=\"20%\"/>\n" +
+                        "\t\t<componente nome=\"Projeto\" peso=\"80%\"/>\n" +
                         "\t</FUC>\n" +
                         "\t<FUC codigo=\"03782\">\n" +
                         "\t\t<ects>42.0</ects>\n" +
                         "\t\t<nome>Dissertação</nome>\n" +
-                        "\t\t<componente nome=\"Dissertação\" peso=\"60\"/>\n" +
-                        "\t\t<componente nome=\"Apresentação\" peso=\"20\"/>\n" +
-                        "\t\t<componente nome=\"Discussão\" peso=\"20\"/>\n" +
+                        "\t\t<componente nome=\"Dissertação\" peso=\"60%\"/>\n" +
+                        "\t\t<componente nome=\"Apresentação\" peso=\"20%\"/>\n" +
+                        "\t\t<componente nome=\"Discussão\" peso=\"20%\"/>\n" +
                         "\t</FUC>\n" +
                         "</plano>"
 
@@ -319,15 +319,15 @@ internal class XMLLibraryTest {
                         "\t<FUC codigo=\"M4310\">\n" +
                         "\t\t<ects>6.0</ects>\n" +
                         "\t\t<nome>Programação Avançada</nome>\n" +
-                        "\t\t<componente nome=\"Quizzes\" peso=\"20\" valorMaximo=\"20\"/>\n" +
-                        "\t\t<componente nome=\"Projeto\" peso=\"80\" valorMaximo=\"20\"/>\n" +
+                        "\t\t<componente nome=\"Quizzes\" peso=\"20%\" valorMaximo=\"20\"/>\n" +
+                        "\t\t<componente nome=\"Projeto\" peso=\"80%\" valorMaximo=\"20\"/>\n" +
                         "\t</FUC>\n" +
                         "\t<FUC codigo=\"03782\">\n" +
                         "\t\t<ects>42.0</ects>\n" +
                         "\t\t<nome>Dissertação</nome>\n" +
-                        "\t\t<componente nome=\"Dissertação\" peso=\"60\" valorMaximo=\"20\"/>\n" +
-                        "\t\t<componente nome=\"Apresentação\" peso=\"20\" valorMaximo=\"20\"/>\n" +
-                        "\t\t<componente nome=\"Discussão\" peso=\"20\" valorMaximo=\"20\"/>\n" +
+                        "\t\t<componente nome=\"Dissertação\" peso=\"60%\" valorMaximo=\"20\"/>\n" +
+                        "\t\t<componente nome=\"Apresentação\" peso=\"20%\" valorMaximo=\"20\"/>\n" +
+                        "\t\t<componente nome=\"Discussão\" peso=\"20%\" valorMaximo=\"20\"/>\n" +
                         "\t</FUC>\n" +
                         "</plano>"
 
@@ -368,15 +368,15 @@ internal class XMLLibraryTest {
                 "\t<FUC codigo=\"M4310\">\n" +
                 "\t\t<ects>6.0</ects>\n" +
                 "\t\t<nome>Programação Avançada</nome>\n" +
-                "\t\t<componenteAvaliacao nome=\"Quizzes\" peso=\"20\"/>\n" +
-                "\t\t<componenteAvaliacao nome=\"Projeto\" peso=\"80\"/>\n" +
+                "\t\t<componenteAvaliacao nome=\"Quizzes\" peso=\"20%\"/>\n" +
+                "\t\t<componenteAvaliacao nome=\"Projeto\" peso=\"80%\"/>\n" +
                 "\t</FUC>\n" +
                 "\t<FUC codigo=\"03782\">\n" +
                 "\t\t<ects>42.0</ects>\n" +
                 "\t\t<nome>Dissertação</nome>\n" +
-                "\t\t<componenteAvaliacao nome=\"Dissertação\" peso=\"60\"/>\n" +
-                "\t\t<componenteAvaliacao nome=\"Apresentação\" peso=\"20\"/>\n" +
-                "\t\t<componenteAvaliacao nome=\"Discussão\" peso=\"20\"/>\n" +
+                "\t\t<componenteAvaliacao nome=\"Dissertação\" peso=\"60%\"/>\n" +
+                "\t\t<componenteAvaliacao nome=\"Apresentação\" peso=\"20%\"/>\n" +
+                "\t\t<componenteAvaliacao nome=\"Discussão\" peso=\"20%\"/>\n" +
                 "\t</FUC>\n" +
                 "</plano>"
 
@@ -456,15 +456,15 @@ internal class XMLLibraryTest {
                         "\t<FUC identificador=\"M4310\">\n" +
                         "\t\t<ects>6.0</ects>\n" +
                         "\t\t<nome>Programação Avançada</nome>\n" +
-                        "\t\t<componente nome=\"Quizzes\" peso=\"20\"/>\n" +
-                        "\t\t<componente nome=\"Projeto\" peso=\"80\"/>\n" +
+                        "\t\t<componente nome=\"Quizzes\" peso=\"20%\"/>\n" +
+                        "\t\t<componente nome=\"Projeto\" peso=\"80%\"/>\n" +
                         "\t</FUC>\n" +
                         "\t<FUC identificador=\"03782\">\n" +
                         "\t\t<ects>42.0</ects>\n" +
                         "\t\t<nome>Dissertação</nome>\n" +
-                        "\t\t<componente nome=\"Dissertação\" peso=\"60\"/>\n" +
-                        "\t\t<componente nome=\"Apresentação\" peso=\"20\"/>\n" +
-                        "\t\t<componente nome=\"Discussão\" peso=\"20\"/>\n" +
+                        "\t\t<componente nome=\"Dissertação\" peso=\"60%\"/>\n" +
+                        "\t\t<componente nome=\"Apresentação\" peso=\"20%\"/>\n" +
+                        "\t\t<componente nome=\"Discussão\" peso=\"20%\"/>\n" +
                         "\t</FUC>\n" +
                         "</plano>"
 
@@ -592,16 +592,16 @@ internal class XMLLibraryTest {
                         "\t<FUC codigo=\"M4310\">\n" +
                         "\t\t<ects>6.0</ects>\n" +
                         "\t\t<nome>Programação Avançada</nome>\n" +
-                        "\t\t<componente nome=\"Quizzes\" peso=\"20\"/>\n" +
-                        "\t\t<componente nome=\"Projeto\" peso=\"80\"/>\n" +
+                        "\t\t<componente nome=\"Quizzes\" peso=\"20%\"/>\n" +
+                        "\t\t<componente nome=\"Projeto\" peso=\"80%\"/>\n" +
                         "\t\t<regente/>\n" +
                         "\t</FUC>\n" +
                         "\t<FUC codigo=\"03782\">\n" +
                         "\t\t<ects>42.0</ects>\n" +
                         "\t\t<nome>Dissertação</nome>\n" +
-                        "\t\t<componente nome=\"Dissertação\" peso=\"60\"/>\n" +
-                        "\t\t<componente nome=\"Apresentação\" peso=\"20\"/>\n" +
-                        "\t\t<componente nome=\"Discussão\" peso=\"20\"/>\n" +
+                        "\t\t<componente nome=\"Dissertação\" peso=\"60%\"/>\n" +
+                        "\t\t<componente nome=\"Apresentação\" peso=\"20%\"/>\n" +
+                        "\t\t<componente nome=\"Discussão\" peso=\"20%\"/>\n" +
                         "\t\t<regente/>\n" +
                         "\t</FUC>\n" +
                         "</plano>"

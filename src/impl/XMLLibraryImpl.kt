@@ -52,7 +52,6 @@ class XMLLibraryImpl : XMLLibrary {
         val name: KClass<*>
     )
 
-
     /**
      * Anotação para esconder um elemento XML.
      */
@@ -74,7 +73,7 @@ class XMLLibraryImpl : XMLLibrary {
         val xmlEntity = clazz.findAnnotation<XmlEntity>()?.name ?: clazz.simpleName
         val properties = clazz.declaredMemberProperties
 
-        // Cria uma nova entidade com o nome obtido.
+        // Cria uma nova entidade com o nome obtido (Entidade raiz)
         var entidade = Entidade(xmlEntity ?: "Entidade", null)
         for (property in properties) {
             val propertyName = property.name
@@ -117,12 +116,14 @@ class XMLLibraryImpl : XMLLibrary {
             }
             // Verifica se a propriedade tem a anotação @XmlAtribute.
             else if (property.hasAnnotation<XmlAtribute>()){
+                // Modifica uma string e adiciona o atributo
                 if (property.hasAnnotation<XmlString>()){
                     var valor = property.getter.call(obj)
                     val adapter = property.findAnnotation<XmlString>()!!.name
                     val instance = adapter.primaryConstructor!!.call()
 
                     for (function in adapter.functions){
+                        // Ignora os métodos padrão da classe Object para não realizar alterações não pretendidas
                         if(!function.name.equals("toString") && !function.name.equals("equals") && !function.name.equals("hashCode")){
                             valor = function.call(instance, valor.toString())
                         }
@@ -139,6 +140,7 @@ class XMLLibraryImpl : XMLLibrary {
         // Verifica se a classe tem a anotação @XmlAdapter
         if (clazz.hasAnnotation<XmlAdapter>()){
             // Obtém a classe do adaptador e cria uma instância dele
+            // Modifica uma classe entidade
             val adapter = clazz.findAnnotation<XmlAdapter>()!!.name
             val instance = adapter.primaryConstructor!!.call()
             // Chama todos os métodos do adapter na entidade, exceto os métodos padrão
@@ -172,13 +174,13 @@ class XMLLibraryImpl : XMLLibrary {
         }
         // Quando a entidade tem subentidades e/ou texto aninhado
         else {
-            // Quando a entidade não tem subentidades, mas tem texto aninhado
+            // Quando a entidade não tem subentidades, mas tem texto aninhado (ex:. nome)
             if (entidade.getEntidades().isEmpty()){
                 output.append(">")
                 output.append(entidade.getTextoAninhado())
                 output.append("</${entidade.getNome()}>")
             }
-            // Quando a entidade tem subentidades
+            // Quando a entidade tem subentidades (ex:. fuc)
             else {
                 output.append(">\n")
 
@@ -541,38 +543,19 @@ class XMLLibraryImpl : XMLLibrary {
     }
 
     /**
-     * Altera todas os atributos com o nome dado a entidades com o nome dado
-     *
-     * @param entidade Entidade onde se inicia a alteração dos atributos.
-     * @param nomeEntidade Nome da entidade à qual se pretende alterar o atributo.
-     * @param nomeAtributo Nome do atributo que se pretende alterar.
-     * @param valorNovo Novo valor para o atributo.
-     */
-   /* fun alterarAtributosGlobalmente(entidade: Entidade, nomeEntidade: String, nomeAtributo: String, valorNovo: String){
-        if (nomeEntidade.isNotEmpty() && nomeAtributo.isNotEmpty() && valorNovo.isNotEmpty()){
-            if (entidade.getNome() == nomeEntidade){
-                entidade.alterarAtributo(nomeAtributo, valorNovo)
-            }
-            for (subEntidade in entidade.getEntidades()){
-                alterarAtributosGlobalmente(subEntidade, nomeEntidade, nomeAtributo, valorNovo)
-            }
-        }
-    }*/
-
-    /**
      * Adiciona uma subEntidade à entidade dada
      *
      * @param entidade Entidade à qual se pretende adicionar a nova subentidade.
      * @param nomeSubEntidade Nome da nova subentidade a ser adicionada.
-     * @param nomeEntidadePai Nome da entidade à qual se pretende adicionar a subentidade.
+     * @param nomeEntidadeMae Nome da entidade à qual se pretende adicionar a subentidade.
      */
-    fun adicionarSubEntidade(entidade: Entidade, nomeSubEntidade: String, nomeEntidadePai: String){
-        if (nomeSubEntidade.isNotEmpty() && nomeEntidadePai.isNotEmpty() && !nomeSubEntidade.contains(" ")){
-            if (entidade.getNome().equals(nomeEntidadePai)){
+    fun adicionarSubEntidade(entidade: Entidade, nomeSubEntidade: String, nomeEntidadeMae: String){
+        if (nomeSubEntidade.isNotEmpty() && nomeEntidadeMae.isNotEmpty() && !nomeSubEntidade.contains(" ")){
+            if (entidade.getNome().equals(nomeEntidadeMae)){
                 entidade.criarSubEntidade(nomeSubEntidade)
             }
             for (subEntidade in entidade.getEntidades()){
-                adicionarSubEntidade(subEntidade, nomeSubEntidade, nomeEntidadePai)
+                adicionarSubEntidade(subEntidade, nomeSubEntidade, nomeEntidadeMae)
             }
         }
     }

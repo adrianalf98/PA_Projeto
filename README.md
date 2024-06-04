@@ -86,8 +86,8 @@ Renomeia todos os atributos com um nome dado para um novo valor.
 Remove todos os atributos com um nome dado das entidades especificadas.
 * <strong>alterarAtributosGlobalmente(entidade: Entidade, nomeEntidade: String, nomeAtributo: String, valorNovo: String)</strong>:
 Altera o valor de todos os atributos com um nome dado nas entidades especificadas.
-* <strong>adicionarSubEntidade(entidade: Entidade, nomeSubEntidade: String, nomeEntidadePai: String)</strong>:
-Adiciona uma subentidade a todas as entidades pai correspondentes.
+* <strong>adicionarSubEntidade(entidade: Entidade, nomeSubEntidade: String, nomeEntidadeMae: String)</strong>:
+Adiciona uma subentidade a todas as entidades mae correspondentes.
 
 ## Uso
 

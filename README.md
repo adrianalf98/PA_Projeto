@@ -41,7 +41,7 @@ Cria um objeto <strong>Entidade</strong> a partir do objeto da data class fornec
 
 Gera uma string XML formatada a partir da Entidade fornecida.
 
-#### Paramêtros
+#### Parâmetros
 * <strong>entidade</strong>: A <strong>Entidade</strong> a ser convertida em uma string XML.
 #### Retorna
 * Uma string XML formatada representando a <strong>Entidade</strong>.
@@ -50,7 +50,7 @@ Gera uma string XML formatada a partir da Entidade fornecida.
 
 Executa uma consulta XPath simplificada na Entidade fornecida.
 
-#### Paramêtros
+#### Parâmetros
 * <strong>entidade</strong>: A <strong>Entidade</strong> raiz para pesquisar.
 * <strong>xPath</strong>: A string de consulta XPath.
 #### Retorna
@@ -61,7 +61,7 @@ Executa uma consulta XPath simplificada na Entidade fornecida.
 
 Gera uma string XML a partir do objeto da data class fornecido.
 
-#### Paramêtros
+#### Parâmetros
 
 * <strong>obj</strong>: O objeto da data class a ser convertido em XML.
 

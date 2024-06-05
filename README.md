@@ -1,10 +1,10 @@
 # XML API
 
 ## Visão Geral
-Esta API fornece funcionalidades para converter data classes do Kotlin em representações XML, permitindo a impressão bonita de XML, consultas semelhantes a XPath. Para efectuar esta conversão a biblioteca baseia-se nas anotações dos ficheiros de dados inseridos nos métodos.
+Esta API fornece funcionalidades para converter data classes do Kotlin em representações XML, permitindo a impressão bonita de XML, consultas semelhantes a XPath. Para efetuar esta conversão a biblioteca baseia-se nas anotações dos ficheiros de dados inseridos nos métodos.
 
 ## Anotações
-As seguintes anotações devem ser utilizadas nas classes enviadas nos métodos pretendidos da API de forma a fazer o correcto mapeamento dos dados numa estrutura XML
+As seguintes anotações devem ser utilizadas nas classes enviadas nos métodos pretendidos da API de forma a fazer o correto mapeamento dos dados numa estrutura XML
 
 * <strong>@XmlEntity(name: String)</strong>:
   Marca uma classe ou propriedade para ser tratada como uma entidade XML. O parâmetro name especifica o nome da entidade XML. Caso não seja dado um valor e esta anotação esteja associada a uma classe será assumido o nome da classe, caso seja associada a uma propriedade de uma classe será assumido o nome Entidade.
@@ -13,17 +13,17 @@ As seguintes anotações devem ser utilizadas nas classes enviadas nos métodos 
   Marca uma propriedade para ser tratada como um atributo XML. O parâmetro name especifica o nome do atributo XML. Caso não seja dado um valor será assumido o nome Atributo.
 
 * <strong>@XmlAdapter(classe: KClass<*>)</strong>:
-  Marca uma classe para usar um adaptador específico para conversão XML. Permite a alteração do estruturamento do XML, deve receber uma classe que tenha métodos que recebam Entidades e façam as alterações da maneira pretendida.
+  Marca uma classe para usar um adaptador específico para conversão XML. Permite a alteração da estruturação do XML, deve receber uma classe que tenha métodos que recebam Entidades e façam as alterações da maneira pretendida.
 
 * <strong>@XmlString(classe: KClass<*>)</strong>:
   Marca uma propriedade para ser tratada como uma string XML, deve receber uma classe que tenha métodos que recebam uma string e a alterem e devolvam da maneira pretendida.
 
 * <strong>@XmlHide</strong>:
-Permite ocultar a entidade mãe de uma lista de entidades. Quando é uma entidade simples(sem subentidades) ou um atributo este comportamento pode ser replicado não utilizando as anotações XmlEntity e XmlAtribute, respectivamente.
+Permite ocultar a entidade mãe de uma lista de entidades. Quando é uma entidade simples(sem subentidades) ou um atributo este comportamento pode ser replicado não utilizando as anotações XmlEntity e XmlAtribute, respetivamente.
 
 ## Métodos
 
-A API oferece várias funcionalidades publicamente acessiveis, estando mais funcionalidades preparadas para 
+A API oferece várias funcionalidades publicamente acessíveis, estando mais funcionalidades preparadas para 
 
 ### criarEntidade(obj: Any): Entidade
 
@@ -31,7 +31,7 @@ Cria um objeto <strong>Entidade</strong> a partir do objeto da data class fornec
 
 #### Parâmetros
 
-* <strong>obj</strong>: O objeto da data class a ser convertido em uma <strong>Entidade</strong>.
+* <strong>obj</strong>: O objeto da data class a ser convertido numa <strong>Entidade</strong>.
 
 #### Retorna
 
@@ -42,7 +42,7 @@ Cria um objeto <strong>Entidade</strong> a partir do objeto da data class fornec
 Gera uma string XML formatada a partir da Entidade fornecida.
 
 #### Parâmetros
-* <strong>entidade</strong>: A <strong>Entidade</strong> a ser convertida em uma string XML.
+* <strong>entidade</strong>: A <strong>Entidade</strong> a ser convertida numa string XML.
 #### Retorna
 * Uma string XML formatada representando a <strong>Entidade</strong>.
 

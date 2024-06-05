@@ -91,4 +91,4 @@ Adiciona uma subentidade a todas as entidades mae correspondentes.
 
 ## Uso
 
-Para usar esta biblioteca, você precisa anotar suas data classes com as anotações fornecidas e depois usar os métodos da API para gerar e manipular representações XML das suas data classes.
+Para usar esta biblioteca, é preciso anotar as data classes com as anotações fornecidas e depois usar os métodos da API para gerar e manipular representações XML das suas data classes.

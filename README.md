@@ -29,7 +29,7 @@ A API oferece várias funcionalidades publicamente acessiveis, estando mais func
 
 Cria um objeto <strong>Entidade</strong> a partir do objeto da data class fornecido.
 
-#### Paramêtros
+#### Parâmetros
 
 * <strong>obj</strong>: O objeto da data class a ser convertido em uma <strong>Entidade</strong>.
 
